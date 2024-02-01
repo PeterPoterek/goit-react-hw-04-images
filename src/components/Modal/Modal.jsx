@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { ModalContainer, ModalImage, ModalCloseButton } from './ModalStyles';
 
 const Modal = ({ closeModal, largeImageURL }) => {
-  const handleKeyPress = event => {
-    if (event.key === 'Escape' || event.key === 'Esc') {
-      closeModal();
-    }
-  };
+  const handleKeyPress = useCallback(
+    event => {
+      if (event.key === 'Escape' || event.key === 'Esc') {
+        closeModal();
+      }
+    },
+    [closeModal]
+  );
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);

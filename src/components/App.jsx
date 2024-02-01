@@ -42,6 +42,13 @@ const App = () => {
     });
   };
 
+  useEffect(() => {
+    if (currentSearchInput) {
+      setImagesToRender([]);
+      fetchPixabayApi(currentSearchInput, 1);
+    }
+  }, [currentSearchInput]);
+
   const fetchPixabayApi = (currentSearchInput, page, pageIncrement = 0) => {
     setLoading(true);
 
@@ -59,13 +66,6 @@ const App = () => {
         setLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (currentSearchInput) {
-      setImagesToRender([]);
-      fetchPixabayApi(currentSearchInput, 1);
-    }
-  }, [currentSearchInput]);
 
   const renderMoreImages = () => {
     setLoading(true);

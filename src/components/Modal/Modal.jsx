@@ -1,33 +1,29 @@
-import { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ModalContainer, ModalImage, ModalCloseButton } from './ModalStyles';
 
-class Modal extends Component {
-  handleKeyPress = event => {
+const Modal = ({ closeModal, largeImageURL }) => {
+  const handleKeyPress = event => {
     if (event.key === 'Escape' || event.key === 'Esc') {
-      this.props.closeModal();
+      closeModal();
     }
   };
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyPress);
-  }
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
-  render() {
-    const { closeModal, largeImageURL } = this.props;
-
-    return (
-      <ModalContainer>
-        <ModalImage src={largeImageURL}></ModalImage>
-        <ModalCloseButton onClick={closeModal}>X</ModalCloseButton>
-      </ModalContainer>
-    );
-  }
-}
+  return (
+    <ModalContainer>
+      <ModalImage src={largeImageURL}></ModalImage>
+      <ModalCloseButton onClick={closeModal}>X</ModalCloseButton>
+    </ModalContainer>
+  );
+};
 
 Modal.propTypes = {
   closeModal: PropTypes.func.isRequired,

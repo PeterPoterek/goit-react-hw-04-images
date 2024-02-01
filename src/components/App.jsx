@@ -7,13 +7,52 @@ import Button from './Button/Button.jsx';
 import Loader from './Loader/Loader.jsx';
 import Modal from './Modal/Modal.jsx';
 
+const apiKey = '41114633-51106070bf303d1c44ed5d4b9';
+const url = 'https://pixabay.com/api/';
+const loaderDelay = 350;
+const imagesPerPage = 12;
+
+const fetchData = (currentSearchInput, page, pageIncrement = 0) => {
+  return axios.get(url, {
+    params: {
+      key: apiKey,
+      q: currentSearchInput,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      page: page + pageIncrement,
+      per_page: imagesPerPage,
+    },
+  });
+};
+
+const fetchPixabayApi = (
+  currentSearchInput,
+  page,
+  pageIncrement = 0,
+  setLoading,
+  setImagesToRender,
+  setCurrentPage,
+  setTotalHits
+) => {
+  setLoading(true);
+
+  fetchData(currentSearchInput, page, pageIncrement)
+    .then(res => {
+      setTimeout(() => {
+        setImagesToRender(res.data.hits);
+        setCurrentPage(1);
+        setTotalHits(res.data.totalHits);
+        setLoading(false);
+      }, loaderDelay);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    });
+};
+
 const App = () => {
-  const apiKey = '41114633-51106070bf303d1c44ed5d4b9';
-  const url = 'https://pixabay.com/api/';
-
-  const loaderDelay = 350;
-  const imagesPerPage = 12;
-
   const [currentSearchInput, setCurrentSearchInput] = useState('');
   const [imagesToRender, setImagesToRender] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,44 +67,26 @@ const App = () => {
     setCurrentSearchInput(userSearchInput);
   };
 
-  const fetchData = (currentSearchInput, page, pageIncrement = 0) => {
-    return axios.get(url, {
-      params: {
-        key: apiKey,
-        q: currentSearchInput,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        page: page + pageIncrement,
-        per_page: imagesPerPage,
-      },
-    });
-  };
-
   useEffect(() => {
     if (currentSearchInput) {
       setImagesToRender([]);
-      fetchPixabayApi(currentSearchInput, 1);
+      fetchPixabayApi(
+        currentSearchInput,
+        1,
+        0,
+        setLoading,
+        setImagesToRender,
+        setCurrentPage,
+        setTotalHits
+      );
     }
-  }, [currentSearchInput]);
-
-  const fetchPixabayApi = (currentSearchInput, page, pageIncrement = 0) => {
-    setLoading(true);
-
-    fetchData(currentSearchInput, page, pageIncrement)
-      .then(res => {
-        setTimeout(() => {
-          setImagesToRender(res.data.hits);
-          setCurrentPage(1);
-          setTotalHits(res.data.totalHits);
-          setLoading(false);
-        }, loaderDelay);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      });
-  };
+  }, [
+    currentSearchInput,
+    setLoading,
+    setImagesToRender,
+    setCurrentPage,
+    setTotalHits,
+  ]);
 
   const renderMoreImages = () => {
     setLoading(true);

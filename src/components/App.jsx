@@ -42,7 +42,7 @@ const App = () => {
     });
   };
 
-  const fetchApi = (currentSearchInput, page, pageIncrement = 0) => {
+  const fetchPixabayApi = (currentSearchInput, page, pageIncrement = 0) => {
     setLoading(true);
 
     fetchData(currentSearchInput, page, pageIncrement)
@@ -63,7 +63,7 @@ const App = () => {
   useEffect(() => {
     if (currentSearchInput) {
       setImagesToRender([]);
-      fetchApi(currentSearchInput, 1);
+      fetchPixabayApi(currentSearchInput, 1);
     }
   }, [currentSearchInput]);
 
